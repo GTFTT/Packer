@@ -23,6 +23,11 @@ packsContainer Packer::generatePacks(char message[], int size)
     const int packsCount = countPacks(dataLength);
     const int currentPackNumber = getPackNumber();
 
+    if(packsCount > MAX_PACKS_COUNT) {
+        Serial.println((String)"[ ERROR ] - MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
+        return packsCont;
+    } 
+
     pack packs[packsCount];
 
     for (int packId = 0; packId < packsCount; packId++)
@@ -54,7 +59,10 @@ packsContainer Packer::generatePacks(char message[], int size)
     }
     
     packsCont.count = sizeof(packs)/sizeof(packs[0]);
-    packsCont.packs = packs;
+
+    for(int k = 0; k < packsCount; k++) {
+        packsCont.packs[k] = packs[k];
+    }
 
     return packsCont;
 }

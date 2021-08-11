@@ -16,7 +16,7 @@
 #define PACK_DIVIDE_SIGN '|'
 #define PACK_SIZE 32
 #define MAX_DATA_SIZE (PACK_SIZE - 6) // Brackets are required to perform operation before this will be used
-#define MAX_PACKS_COUNT 150
+#define MAX_PACKS_COUNT 11
 
 struct pack
 {
@@ -31,7 +31,7 @@ struct pack
 struct packsContainer
 {
 	unsigned char count = 0;
-	pack *packs; //Initialize buffer with zeros
+	pack packs[MAX_PACKS_COUNT]; //Initialize buffer with zeros
 };
 
 struct builtPack
@@ -41,6 +41,8 @@ struct builtPack
 };
 
 /*
+	Arduino UNO can handle maximum of 271 caracters(out of memory)
+
 	Packer - Use to convert data into special strings structure and decode it later into values.
 	There are also available methods to send raw data.
 
