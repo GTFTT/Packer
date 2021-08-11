@@ -101,7 +101,8 @@ void Packer::printPack(pack p)
     Serial.println((String)"Payload size: " + (int)p.payloadSize);
     Serial.print("Payload: ");
     Serial.print("+= ");
-    Serial.print(p.payload);
+    for (int i = 0; i < p.payloadSize; i++)
+        Serial.print((char)p.payload[i]);
     Serial.println(" =+");
 }
 
