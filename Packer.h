@@ -15,7 +15,7 @@
 
 #define PACK_DIVIDE_SIGN '|'
 #define PACK_SIZE 32
-#define MAX_DATA_SIZE PACK_SIZE - 6
+#define MAX_DATA_SIZE (PACK_SIZE - 6) // Brackets are required to perform operation before this will be used
 #define MAX_PACKS_COUNT 150
 
 struct pack
@@ -30,7 +30,7 @@ struct pack
 /* Contains array of generated packs and count of them */
 struct packsContainer
 {
-	unsigned char packsCount = 0;
+	unsigned char count = 0;
 	pack *packs; //Initialize buffer with zeros
 };
 

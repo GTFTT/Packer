@@ -19,7 +19,7 @@ int Packer::countPacks(int dataLength)
 packsContainer Packer::generatePacks(char message[], int size)
 {
     int dataLength = size - 1; //Remove empty character from generation
-
+    packsContainer packsCont;
     const int packsCount = countPacks(dataLength);
     const int currentPackNumber = getPackNumber();
 
@@ -52,9 +52,8 @@ packsContainer Packer::generatePacks(char message[], int size)
 
         packs[packId] = p;
     }
-
-    packsContainer packsCont;
-    packsCont.packsCount = sizeof(packs);
+    
+    packsCont.count = sizeof(packs)/sizeof(packs[0]);
     packsCont.packs = packs;
 
     return packsCont;
