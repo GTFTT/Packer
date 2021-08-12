@@ -80,12 +80,27 @@ public:
 
 	/* Restore builded pack into normal(easy to read and use) pack */
 	pack restorePack(builtPack p);
+
+	/* Set USE_DEBUG value, if true, serial output will be enabled */
+	void setDebug(bool value);
 private:
 	/* Last pack number, each message has its set of generated packs with the same number */
 	unsigned char packNo = 0;
 
 	/* Get new pack number, automatically increases last pack number. */
 	unsigned char getPackNumber(void);
+
+	/* If true - there will be used Serial for output */
+	bool USE_DEBUG = false;
+
+	/* Print message. Available only if USE_DEBUG. */
+	void out(String message);
+
+	/* Print with new line. Available only if USE_DEBUG. */
+	void outln(String message);
+
+	/* Print empty line. Available only if USE_DEBUG. */
+	void outln(void);
 };
 
 #endif

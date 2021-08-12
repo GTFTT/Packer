@@ -2,7 +2,7 @@
 
 Packer::Packer()
 {
-    Serial.println("Library is initialized!");
+    outln("Library is initialized!");
 }
 
 //----- Public ----------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ packsContainer Packer::generatePacks(char message[], int size)
     const int currentPackNumber = getPackNumber();
 
     if(packsCount > MAX_PACKS_COUNT) {
-        Serial.println((String)"[ ERROR ] - MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
+        outln((String)"[ ERROR ] - MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
         return packsCont;
     } 
 
@@ -102,32 +102,32 @@ builtPack Packer::buildPack(pack p)
 
 void Packer::printPack(pack p)
 {
-    Serial.println("-------------------------------");
-    Serial.print((String)"Type: " + (int)p.type + " | ");
-    Serial.print((String)"Number: " + (int)p.number + " | ");
-    Serial.print((String)"ID: " + (int)p.id + " | ");
-    Serial.println((String)"Payload size: " + (int)p.payloadSize);
-    Serial.print("Payload: ");
-    Serial.print("+= ");
+    outln("-------------------------------");
+    out((String)"Type: " + (int)p.type + " | ");
+    out((String)"Number: " + (int)p.number + " | ");
+    out((String)"ID: " + (int)p.id + " | ");
+    outln((String)"Payload size: " + (int)p.payloadSize);
+    out("Payload: ");
+    out("+= ");
     for (int i = 0; i < p.payloadSize; i++)
-        Serial.print((char)p.payload[i]);
-    Serial.println(" =+");
+        out((String)(char)p.payload[i]);
+    outln(" =+");
 }
 
 void Packer::printPack(builtPack p)
 {
-    Serial.println("-------------------------------");
-    Serial.print("Pack: ");
+    outln("-------------------------------");
+    out("Pack: ");
     for (int i = 0; i < p.size; i++)
-        Serial.print((char)p.body[i]);
-    Serial.println();
+        out((String)(char)p.body[i]);
+    outln();
 
-    Serial.print("Bin: ");
+    out("Bin: ");
     for (int i = 0; i < p.size; i++){
-        Serial.print(" ");
-        Serial.print( (int)p.body[i]);
+        out(" ");
+        out((String)(int)p.body[i]);
     }
-    Serial.println();
+    outln();
 }
 
 pack Packer::restorePack(builtPack p)
@@ -148,9 +148,13 @@ pack Packer::restorePack(builtPack p)
     }
     else
     {
-        Serial.println("Throw error here!");
+        outln("Throw error here!");
     }
     return buffer;
+}
+
+void Packer::setDebug(bool value) {
+    USE_DEBUG = value;
 }
 
 //----- Private ---------------------------------------------------------------------------------------------
@@ -165,4 +169,22 @@ unsigned char Packer::getPackNumber(void)
     if(packNo > 255) packNo = 0;
 
     return packNo;
+}
+
+void Packer::out(String message) {
+    if(!USE_DEBUG) return;
+
+    Serial.print(message);
+}
+
+void Packer::outln(String message) {
+    if(!USE_DEBUG) return;
+
+    Serial.println(message);
+}
+
+void Packer::outln(void) {
+    if(!USE_DEBUG) return;
+
+    Serial.println();
 }
