@@ -153,73 +153,16 @@ pack Packer::restorePack(builtPack p)
     return buffer;
 }
 
-/*
-Last character of an array is counted too. "Hello" has 6 characters.
-JSON variant of type string has two more symbols at the begining and at the end: ' " '.
-serializeJson - Standard JSON
-serializeMsgPack - Really serialized and compressed binary object
-I can use serial in my library if it is defined some where!
-*/
-String Packer::test(char arr[], int size)
-{
-
-    char message[size]; //Create copy of an input array
-    for (int i = 0; i < size; i++)
-    {
-        message[i] = arr[i];
-    }
-
-    // allocate the memory for the document
-    DynamicJsonDocument doc(1024);
-
-    doc["test"] = 234123;
-    // JsonVariant variant = doc.to<JsonVariant>();
-    // variant.set(message);
-
-    int jsonSize = measureJson(doc);
-    char buffJSON[jsonSize];
-
-    int msgPackSize = measureMsgPack(doc);
-    char buffMsgPack[msgPackSize];
-
-    int writenBytesJSON = serializeJson(doc, buffJSON, jsonSize);
-    int writenBytesMsgPack = serializeMsgPack(doc, buffMsgPack, msgPackSize);
-
-    String res = "";
-
-    res += "Size pass: " + (String)size + "\n\n";
-
-    res += "jsonSize: " + (String)jsonSize + "\n";
-    res += "msgPackSize: " + (String)msgPackSize + "\n\n";
-
-    res += "writenBytesJSON: " + (String)writenBytesJSON + "\n";
-    res += "writenBytesMsgPack: " + (String)writenBytesMsgPack + "\n\n";
-
-    res += "Passed: ";
-    for (int i = 0; i < sizeof(message); i++)
-        res += message[i];
-    res += "\n\n";
-
-    res += "Serialized JSON: ";
-    for (int i = 0; i < sizeof(buffJSON); i++)
-        res += buffJSON[i];
-    res += "\n";
-
-    res += "Serialized MsgPack: ";
-
-    Serial.println(res);
-
-    for (int i = 0; i < sizeof(buffMsgPack); i++)
-        Serial.print(buffMsgPack[i]);
-    Serial.println();
-
-    return res;
-}
-
 //----- Private ---------------------------------------------------------------------------------------------
 
-/* Automatically increases pack number after each call */
+/*
+Automatically increases pack number after each call.
+If pack number is too big it will reset it and start counting again.
+*/
 unsigned char Packer::getPackNumber(void)
 {
-    return packNo++;
+    packNo++;
+    if(packNo > 255) packNo = 0;
+
+    return packNo;
 }
