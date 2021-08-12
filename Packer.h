@@ -36,7 +36,8 @@ struct builtPack
 };
 
 /*
-	Arduino UNO can handle maximum up to 271 caracters(out of memory) when generating all packs at a time
+	Arduino UNO can handle maximum up to 271 caracters(out of memory) when generating all packs at a time.
+	This libary works ONLY with char arrays as data strings!
 
 	Packer - The purpose of this library if to convert arrays of characters into packs
 	that can be converted into 32 bytes data strings. 
@@ -65,9 +66,13 @@ public:
 
 	/* How many packs will be generated from provided data */
 	int countPacks(int dataLength);
+	int countPacks(char arr[], int size);
 
 	/* Generate array of packs that can be used later. Takes a lot of memory. */
 	packsContainer generatePacks(char message[], int size);
+
+	/* Generate a pack which can be built later. Specify id of a pack. */
+	pack generatePack(char message[], int size, unsigned char packNumber, unsigned char packId);
 
 	/* "Compiles" pack into version that is ready to be sent. */
 	builtPack buildPack(pack p);
@@ -98,6 +103,9 @@ private:
 
 	/* Print with new line. Available only if USE_DEBUG. */
 	void outln(String message);
+	
+	/* Print error message. Available only if USE_DEBUG. */
+	void outerr(String errorMessage);
 
 	/* Print empty line. Available only if USE_DEBUG. */
 	void outln(void);

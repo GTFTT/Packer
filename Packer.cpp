@@ -16,6 +16,12 @@ int Packer::countPacks(int dataLength)
     return count;
 }
 
+/* For user simplicity, just takes length of an arrary and decreases by one to calculate packs count */
+int Packer::countPacks(char arr[], int size)
+{
+    return countPacks(size - 1);
+}
+
 packsContainer Packer::generatePacks(char message[], int size)
 {
     int dataLength = size - 1; //Remove empty character from generation
@@ -65,6 +71,46 @@ packsContainer Packer::generatePacks(char message[], int size)
     }
 
     return packsCont;
+}
+
+pack Packer::generatePack(char message[], int size, unsigned char packNumber, unsigned char packId) {
+    int dataLength = size - 1; //Remove empty character from generation
+    const int packsCount = countPacks(dataLength);
+    pack p;
+
+    if(packsCount > MAX_PACKS_COUNT) {
+        outerr((String)"MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
+        return p;
+    }
+
+    if(packId >= packsCount || packId < 0) {
+        outerr((String) "Invalid packId provided");
+        return;
+    }
+
+    //Calculate payload available size
+    int payloadSize = dataLength - (MAX_DATA_SIZE * packId);
+    if (payloadSize > MAX_DATA_SIZE)
+        payloadSize = MAX_DATA_SIZE;
+
+    //Define package type
+    if (packId == 0 && (packId + 1) != packsCount)
+        p.type = 1;
+    if (packId != 0 && (packId + 1) < packsCount)
+        p.type = 2;
+    if (packId > 0 && (packId + 1) == packsCount)
+        p.type = 3;
+    if (packId == 0 && (packId + 1) == packsCount)
+        p.type = 4;
+
+    p.number = packNumber;
+    p.id = packId;
+    p.payloadSize = payloadSize;
+
+    for (int i = 0; i < payloadSize; i++)
+        p.payload[i] = message[i + (MAX_DATA_SIZE * packId)];
+
+    return p;
 }
 
 builtPack Packer::buildPack(pack p)
@@ -175,6 +221,12 @@ void Packer::out(String message) {
     if(!USE_DEBUG) return;
 
     Serial.print(message);
+}
+
+void Packer::outerr(String errorMessage) {
+    if(!USE_DEBUG) return;
+
+    Serial.print((String)"[ ERROR ]: " + errorMessage);
 }
 
 void Packer::outln(String message) {
