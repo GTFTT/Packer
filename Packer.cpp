@@ -30,7 +30,7 @@ packsContainer Packer::generatePacks(char message[], int size)
     const int currentPackNumber = getPackNumber();
 
     if(packsCount > MAX_PACKS_COUNT) {
-        outln((String)"[ ERROR ] - MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
+        outerr((String)"MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
         return packsCont;
     } 
 
@@ -38,30 +38,7 @@ packsContainer Packer::generatePacks(char message[], int size)
 
     for (int packId = 0; packId < packsCount; packId++)
     {
-        //Calculate payload available size
-        int payloadSize = dataLength - (MAX_DATA_SIZE * packId); //Minus one to prevent empty character at the end of an array
-        if (payloadSize > MAX_DATA_SIZE)
-            payloadSize = MAX_DATA_SIZE;
-
-        pack p;
-
-        if (packId == 0 && (packId + 1) != packsCount)
-            p.type = 1;
-        if (packId != 0 && (packId + 1) < packsCount)
-            p.type = 2;
-        if (packId > 0 && (packId + 1) == packsCount)
-            p.type = 3;
-        if (packId == 0 && (packId + 1) == packsCount)
-            p.type = 4;
-
-        p.number = currentPackNumber;
-        p.id = packId;
-        p.payloadSize = payloadSize;
-
-        for (int i = 0; i < payloadSize; i++)
-            p.payload[i] = message[i + (MAX_DATA_SIZE * packId)];
-
-        packs[packId] = p;
+        packs[packId] = generatePack(message, size, currentPackNumber, packId);
     }
     
     packsCont.count = sizeof(packs)/sizeof(packs[0]);
@@ -73,6 +50,7 @@ packsContainer Packer::generatePacks(char message[], int size)
     return packsCont;
 }
 
+/* This can be used internally or globally, so do not delete any validations */
 pack Packer::generatePack(char message[], int size, unsigned char packNumber, unsigned char packId) {
     int dataLength = size - 1; //Remove empty character from generation
     const int packsCount = countPacks(dataLength);
