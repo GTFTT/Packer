@@ -83,6 +83,9 @@ public:
 	/* Print builded pack. Uses Serial monitor */
 	void printPack(builtPack p);
 
+	/* Takes body of a back and generates special built pack. It can be used later to recompile message from packs. */
+	builtPack Packer::getBuiltPack(char data[], unsigned char size);
+
 	/* Restore builded pack into normal(easy to read and use) pack */
 	pack restorePack(builtPack p);
 

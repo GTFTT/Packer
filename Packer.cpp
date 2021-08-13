@@ -154,6 +154,22 @@ void Packer::printPack(builtPack p)
     outln();
 }
 
+builtPack Packer::getBuiltPack(char data[], unsigned char size) {
+    builtPack bp;
+
+    if(size < 0 || (size-1) > PACK_SIZE) {
+        outerr((String) "Provided data snippet is invalid. Cannot generate built pack.");
+        return bp;
+    }
+
+    for (unsigned char i = 0; i < (size-1); i++)
+    {
+        bp.body[i] = data[i];
+    }
+    
+    return bp;
+}
+
 pack Packer::restorePack(builtPack p)
 {
     pack buffer;
@@ -172,7 +188,7 @@ pack Packer::restorePack(builtPack p)
     }
     else
     {
-        outln("Throw error here!");
+        outerr((String)"Invalid pack provided for restoring");
     }
     return buffer;
 }
