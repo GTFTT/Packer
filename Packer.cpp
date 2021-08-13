@@ -203,8 +203,6 @@ void Packer::setDebug(bool value) {
     USE_DEBUG = value;
 }
 
-//----- Private ---------------------------------------------------------------------------------------------
-
 /*
 Automatically increases pack number after each call.
 If pack number is too big it will reset it and start counting again.
@@ -216,6 +214,8 @@ unsigned char Packer::getPackNumber(void)
 
     return packNo;
 }
+
+//----- Private ---------------------------------------------------------------------------------------------
 
 void Packer::out(String message) {
     if(!USE_DEBUG) return;
