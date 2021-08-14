@@ -99,9 +99,15 @@ public:
 	/* Get new pack number, automatically increases last pack number. */
 	unsigned char getPackNumber(void);
 
+	/* Subscribe for eventwhen message was regenerated from packs. (Pass callback) */
+	void onMessageReady( void (*)(char arr[], int size));
+
 	/* Set USE_DEBUG value, if true, serial output will be enabled */
 	void setDebug(bool value);
 private:
+
+	static void (*user_onMessageReady)(char arr[], int size);
+
 	/* Last pack number, each message has its set of generated packs with the same number */
 	unsigned char packNo = 0;
 

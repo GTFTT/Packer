@@ -1,5 +1,8 @@
 #include "Packer.h"
 
+//Initialize callback for event
+void (*Packer::user_onMessageReady)(char arr[], int size);
+
 Packer::Packer()
 {
     outln(F("Library is initialized!"));
@@ -231,6 +234,11 @@ unsigned char Packer::getPackNumber(void)
     return packNo;
 }
 
+void Packer::onMessageReady( void (*function)(char arr[], int size) )
+{
+  user_onMessageReady = function;
+}
+
 //----- Private ---------------------------------------------------------------------------------------------
 
 void Packer::out(String message) {
@@ -242,7 +250,7 @@ void Packer::out(String message) {
 void Packer::outerr(String errorMessage) {
     if(!USE_DEBUG) return;
 
-    Serial.print((String) F("[ ERROR ]: ") + errorMessage);
+    Serial.println((String) F("[ ERROR ]: ") + errorMessage);
 }
 
 void Packer::outln(String message) {
@@ -261,6 +269,7 @@ void Packer::clearPacksBuffer(void) {
     packsBuffer.count = 0; // Clearing static array is not necessary
     out(F("Buffer cleared"));
 }
+
 void Packer::checkPacksBuffer(void) {
     bool containsPackOfTypeFour = false;
     bool containsPacksOfTypeOne = false;
@@ -321,6 +330,11 @@ void Packer::checkPacksBuffer(void) {
 
 void Packer::buildDataFromPacksBuffer(void) {
 
+    if(!user_onMessageReady){
+        outerr(F("No callback for an event, data will not be tranmitted to a user(will be lost)"));
+        return;
+    }
+
     int dataSize = 0;
     for(unsigned char i = 0; i < packsBuffer.count; i++) {
         dataSize += packsBuffer.packs[i].payloadSize;
@@ -336,9 +350,13 @@ void Packer::buildDataFromPacksBuffer(void) {
         }
     }
 
+    out(F("Generated data: "));
     for (int i = 0; i < sizeof(data); i++)
     {
-        out((String)data[i]);
+        out((String) data[i]);
     }
     outln();
+
+    //Call user callback
+    user_onMessageReady(data, sizeof(data));
 }
