@@ -2,7 +2,7 @@
 
 Packer::Packer()
 {
-    outln("Library is initialized!");
+    outln(F("Library is initialized!"));
 }
 
 //----- Public ----------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ packsContainer Packer::generatePacks(char message[], int size)
     const int currentPackNumber = getPackNumber();
 
     if(packsCount > MAX_PACKS_COUNT) {
-        outerr((String)"MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
+        outerr((String) F("MAX PACKS COUNT REACHED(") + packsCount + F("/") + MAX_PACKS_COUNT + F(")"));
         return packsCont;
     } 
 
@@ -57,12 +57,12 @@ pack Packer::generatePack(char message[], int size, unsigned char packNumber, un
     pack p;
 
     if(packsCount > MAX_PACKS_COUNT) {
-        outerr((String)"MAX PACKS COUNT REACHED(" + packsCount + "/" + MAX_PACKS_COUNT + ")");
+        outerr((String) F("MAX PACKS COUNT REACHED(") + packsCount + F("/") + MAX_PACKS_COUNT + F(")"));
         return p;
     }
 
     if(packId >= packsCount || packId < 0) {
-        outerr((String) "Invalid packId provided");
+        outerr((String) F("Invalid packId provided"));
         return;
     }
 
@@ -126,29 +126,29 @@ builtPack Packer::buildPack(pack p)
 
 void Packer::printPack(pack p)
 {
-    outln("-------------------------------");
-    out((String)"Type: " + (int)p.type + " | ");
-    out((String)"Number: " + (int)p.number + " | ");
-    out((String)"ID: " + (int)p.id + " | ");
-    outln((String)"Payload size: " + (int)p.payloadSize);
-    out("Payload: ");
-    out("+= ");
+    outln(F("-------------------------------"));
+    out((String) F("Type: ") + (int)p.type + F(" | "));
+    out((String) F("Number: ") + (int)p.number + F(" | "));
+    out((String) F("ID: ") + (int)p.id + F(" | "));
+    outln((String) F("Payload size: ") + (int)p.payloadSize);
+    out(F("Payload: "));
+    out(F("+= "));
     for (int i = 0; i < p.payloadSize; i++)
         out((String)(char)p.payload[i]);
-    outln(" =+");
+    outln(F(" =+"));
 }
 
 void Packer::printPack(builtPack p)
 {
-    outln("-------------------------------");
-    out("Pack: ");
+    outln(F("-------------------------------"));
+    out(F("Pack: "));
     for (int i = 0; i < p.size; i++)
         out((String)(char)p.body[i]);
     outln();
 
-    out("Bin: ");
+    out(F("Bin: "));
     for (int i = 0; i < p.size; i++){
-        out(" ");
+        out(F(" "));
         out((String)(int)p.body[i]);
     }
     outln();
@@ -158,7 +158,7 @@ builtPack Packer::getBuiltPack(char data[], unsigned char size) {
     builtPack bp;
 
     if(size < 0 || (size-1) > PACK_SIZE) {
-        outerr((String) "Provided data snippet is invalid. Cannot generate built pack.");
+        outerr((String) F("Provided data snippet is invalid. Cannot generate built pack."));
         return bp;
     }
 
@@ -188,7 +188,7 @@ pack Packer::restorePack(builtPack p)
     }
     else
     {
-        outerr((String)"Invalid pack provided for restoring");
+        outerr((String) F("Invalid pack provided for restoring"));
     }
     return buffer;
 }
@@ -220,7 +220,7 @@ void Packer::out(String message) {
 void Packer::outerr(String errorMessage) {
     if(!USE_DEBUG) return;
 
-    Serial.print((String)"[ ERROR ]: " + errorMessage);
+    Serial.print((String) F("[ ERROR ]: ") + errorMessage);
 }
 
 void Packer::outln(String message) {
