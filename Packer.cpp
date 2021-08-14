@@ -9,15 +9,15 @@ Packer::Packer()
 
 /* Count of packs that can be generated from data of provided length.
 Data does not include last empty characters for an array. */
-int Packer::countPacks(int dataLength)
+unsigned char Packer::countPacks(int dataLength)
 {
-    int count = dataLength / MAX_DATA_SIZE;
+    unsigned char count = dataLength / MAX_DATA_SIZE;
     if ((dataLength % MAX_DATA_SIZE) != 0) count++;
     return count;
 }
 
 /* For user simplicity, just takes length of an arrary and decreases by one to calculate packs count */
-int Packer::countPacks(char arr[], int size)
+unsigned char Packer::countPacks(char arr[], int size)
 {
     return countPacks(size - 1);
 }
@@ -26,8 +26,8 @@ packsContainer Packer::generatePacks(char message[], int size)
 {
     int dataLength = size - 1; //Remove empty character from generation
     packsContainer packsCont;
-    const int packsCount = countPacks(dataLength);
-    const int currentPackNumber = getPackNumber();
+    const unsigned char packsCount = countPacks(dataLength);
+    const unsigned char currentPackNumber = getPackNumber();
 
     if(packsCount > MAX_PACKS_COUNT) {
         outerr((String) F("MAX PACKS COUNT REACHED(") + packsCount + F("/") + MAX_PACKS_COUNT + F(")"));
@@ -36,14 +36,14 @@ packsContainer Packer::generatePacks(char message[], int size)
 
     pack packs[packsCount];
 
-    for (int packId = 0; packId < packsCount; packId++)
+    for (unsigned char packId = 0; packId < packsCount; packId++)
     {
         packs[packId] = generatePack(message, size, currentPackNumber, packId);
     }
     
     packsCont.count = sizeof(packs)/sizeof(packs[0]);
 
-    for(int k = 0; k < packsCount; k++) {
+    for(unsigned char k = 0; k < packsCount; k++) {
         packsCont.packs[k] = packs[k];
     }
 
@@ -53,7 +53,7 @@ packsContainer Packer::generatePacks(char message[], int size)
 /* This can be used internally or globally, so do not delete any validations */
 pack Packer::generatePack(char message[], int size, unsigned char packNumber, unsigned char packId) {
     int dataLength = size - 1; //Remove empty character from generation
-    const int packsCount = countPacks(dataLength);
+    const unsigned char packsCount = countPacks(dataLength);
     pack p;
 
     if(packsCount > MAX_PACKS_COUNT) {
@@ -67,7 +67,7 @@ pack Packer::generatePack(char message[], int size, unsigned char packNumber, un
     }
 
     //Calculate payload available size
-    int payloadSize = dataLength - (MAX_DATA_SIZE * packId);
+    unsigned char payloadSize = dataLength - (MAX_DATA_SIZE * packId);
     if (payloadSize > MAX_DATA_SIZE)
         payloadSize = MAX_DATA_SIZE;
 
@@ -85,7 +85,7 @@ pack Packer::generatePack(char message[], int size, unsigned char packNumber, un
     p.id = packId;
     p.payloadSize = payloadSize;
 
-    for (int i = 0; i < payloadSize; i++)
+    for (unsigned char i = 0; i < payloadSize; i++)
         p.payload[i] = message[i + (MAX_DATA_SIZE * packId)];
 
     return p;
@@ -96,7 +96,7 @@ builtPack Packer::buildPack(pack p)
     builtPack buffer;
 
     //Build pack
-    int index = 0;
+    unsigned char index = 0;
     buffer.body[index] = PACK_DIVIDE_SIGN; //Start symbol
     index++;
 
@@ -115,7 +115,7 @@ builtPack Packer::buildPack(pack p)
     buffer.body[index] = PACK_DIVIDE_SIGN;
     index++;
 
-    for (int i = 0; i < MAX_DATA_SIZE; i++)
+    for (unsigned char i = 0; i < MAX_DATA_SIZE; i++)
     {
         buffer.body[index] = p.payload[i];
         index++;
@@ -127,13 +127,13 @@ builtPack Packer::buildPack(pack p)
 void Packer::printPack(pack p)
 {
     outln(F("-------------------------------"));
-    out((String) F("Type: ") + (int)p.type + F(" | "));
-    out((String) F("Number: ") + (int)p.number + F(" | "));
-    out((String) F("ID: ") + (int)p.id + F(" | "));
-    outln((String) F("Payload size: ") + (int)p.payloadSize);
+    out((String) F("Type: ") + (unsigned char)p.type + F(" | "));
+    out((String) F("Number: ") + (unsigned char)p.number + F(" | "));
+    out((String) F("ID: ") + (unsigned char)p.id + F(" | "));
+    outln((String) F("Payload size: ") + (unsigned char)p.payloadSize);
     out(F("Payload: "));
     out(F("+= "));
-    for (int i = 0; i < p.payloadSize; i++)
+    for (unsigned char i = 0; i < p.payloadSize; i++)
         out((String)(char)p.payload[i]);
     outln(F(" =+"));
 }
@@ -142,14 +142,14 @@ void Packer::printPack(builtPack p)
 {
     outln(F("-------------------------------"));
     out(F("Pack: "));
-    for (int i = 0; i < p.size; i++)
+    for (unsigned char i = 0; i < p.size; i++)
         out((String)(char)p.body[i]);
     outln();
 
     out(F("Bin: "));
-    for (int i = 0; i < p.size; i++){
+    for (unsigned char i = 0; i < p.size; i++){
         out(F(" "));
-        out((String)(int)p.body[i]);
+        out((String)(unsigned char)p.body[i]);
     }
     outln();
 }
@@ -181,7 +181,7 @@ pack Packer::restorePack(builtPack p)
         buffer.id = p.body[3];
         buffer.payloadSize = p.body[4];
 
-        for (int i = 0; i < buffer.payloadSize; i++)
+        for (unsigned char i = 0; i < buffer.payloadSize; i++)
         {
             buffer.payload[i] = p.body[i + 6];
         }

@@ -65,8 +65,8 @@ public:
 	Packer(void);
 
 	/* How many packs will be generated from provided data */
-	int countPacks(int dataLength);
-	int countPacks(char arr[], int size);
+	unsigned char countPacks(int dataLength);
+	unsigned char countPacks(char arr[], int size);
 
 	/* Generate array of packs that can be used later. Takes a lot of memory. */
 	packsContainer generatePacks(char message[], int size);
