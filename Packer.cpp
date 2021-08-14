@@ -42,6 +42,7 @@ packsContainer Packer::generatePacks(char message[], int size)
     }
     
     packsCont.count = sizeof(packs)/sizeof(packs[0]);
+    packsCont.lastPackNumber = currentPackNumber;
 
     for(unsigned char k = 0; k < packsCount; k++) {
         packsCont.packs[k] = packs[k];
@@ -193,6 +194,27 @@ pack Packer::restorePack(builtPack p)
     return buffer;
 }
 
+void Packer::pushPack(pack p) {
+    if(packsBuffer.count >= MAX_PACKS_COUNT) {
+        outerr(F("packsBuffer is full, cannot add more packs."));
+        return;
+    }
+    //Always initialize last pack number when first pack passed
+    if(packsBuffer.count == 0) {
+        packsBuffer.lastPackNumber = p.number;
+    }
+
+    if(packsBuffer.lastPackNumber != p.number) {
+        outerr(F("Pushed pack differs from packs in buffer."));
+        clearPacksBuffer();
+    }
+
+    packsBuffer.packs[packsBuffer.count] = p; //Insert new pack at the end
+    packsBuffer.count++;
+
+    checkPacksBuffer();
+}
+
 void Packer::setDebug(bool value) {
     USE_DEBUG = value;
 }
@@ -233,4 +255,90 @@ void Packer::outln(void) {
     if(!USE_DEBUG) return;
 
     Serial.println();
+}
+
+void Packer::clearPacksBuffer(void) {
+    packsBuffer.count = 0; // Clearing static array is not necessary
+    out(F("Buffer cleared"));
+}
+void Packer::checkPacksBuffer(void) {
+    bool containsPackOfTypeFour = false;
+    bool containsPacksOfTypeOne = false;
+    bool containsPacksOfTypeTwo = false;
+    bool containsPacksOfTypeThree = false;
+    bool containsPacksOfUnknownTypes = false;
+
+    bool containsProperPackIdSequence = true;
+
+    for(unsigned char i = 0; i < packsBuffer.count; i++) {
+
+        //Validations
+        if(packsBuffer.packs[i].type == 4)
+            containsPackOfTypeFour = true;
+        else if(packsBuffer.packs[i].type == 1)
+            containsPacksOfTypeOne = true;
+        else if(packsBuffer.packs[i].type == 2)
+            containsPacksOfTypeTwo = true;
+        else if(packsBuffer.packs[i].type == 3)
+            containsPacksOfTypeThree = true;
+        else containsPacksOfUnknownTypes = true;
+
+        if(packsBuffer.packs[i].id != i) containsProperPackIdSequence = false;
+    }
+
+    //Messages output when something go wrong
+    if(!containsProperPackIdSequence) {
+        outerr(F("Incorrect packId sequence"));
+        clearPacksBuffer();
+        return;
+    }
+
+    if(containsPacksOfUnknownTypes) {
+        outerr(F("Unknown type of pack was detected"));
+        clearPacksBuffer();
+        return;
+    }
+
+    if(containsPacksOfTypeOne && containsPacksOfTypeTwo && containsPacksOfTypeThree) {
+        outln(F("OK: Lets build a message from packs of type 1, 2 and 3"));
+        buildDataFromPacksBuffer();
+        clearPacksBuffer();
+        return;
+    }
+
+    if(containsPackOfTypeFour) {
+        outln(F("OK: Lets build a message from packs of type 4"));
+        buildDataFromPacksBuffer();
+        clearPacksBuffer();
+        return;
+    }
+
+    //No problems was found but message cannot be generated yet
+    // out(F("No problems was found but message cannot be generated yet"));
+    return;
+}
+
+
+void Packer::buildDataFromPacksBuffer(void) {
+
+    int dataSize = 0;
+    for(unsigned char i = 0; i < packsBuffer.count; i++) {
+        dataSize += packsBuffer.packs[i].payloadSize;
+    }
+
+    char data[dataSize] = {0};
+    int dataIndex = 0;
+
+    for(unsigned char i = 0; i < packsBuffer.count; i++) {
+        for(unsigned char j = 0; j < packsBuffer.packs[i].payloadSize; j++) {
+            data[dataIndex] = packsBuffer.packs[i].payload[j];
+            dataIndex++;
+        }
+    }
+
+    for (int i = 0; i < sizeof(data); i++)
+    {
+        out((String)data[i]);
+    }
+    outln();
 }

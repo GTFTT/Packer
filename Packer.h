@@ -21,10 +21,14 @@ struct pack
 	char payload[MAX_DATA_SIZE] = {0}; //Initialize buffer with zeros
 };
 
-/* Contains array of generated packs and count of them. Use this with mind, it can create stack overflow*/
+/*
+Contains array of generated packs and count of them and other props.
+Use this with mind, it can create stack overflow.
+*/
 struct packsContainer
 {
 	unsigned char count = 0;
+	unsigned char lastPackNumber; //Each pack has its own number, but this container is supposed to save packs of only one number
 	pack packs[MAX_PACKS_COUNT]; //Initialize buffer with zeros
 };
 
@@ -89,6 +93,9 @@ public:
 	/* Restore builded pack into normal(easy to read and use) pack */
 	pack restorePack(builtPack p);
 
+	/* Put restored pack into buffer container for later restoring of a message. */
+	void pushPack(pack p);
+
 	/* Get new pack number, automatically increases last pack number. */
 	unsigned char getPackNumber(void);
 
@@ -97,6 +104,22 @@ public:
 private:
 	/* Last pack number, each message has its set of generated packs with the same number */
 	unsigned char packNo = 0;
+
+	/* This will be used to save packs. Those packs will betranformed into original message if possible. */
+	packsContainer packsBuffer;
+
+	/* This method is used to clear packsBuffer */
+	void clearPacksBuffer(void);
+
+	/*
+		Checks if buffered packs are ready to be transformed into message.
+		If so, then call builder with to generate output, call callback and clear buffer.
+		If error was found, then buffer will be cleared.
+	*/
+	void checkPacksBuffer(void);
+
+	/* Build data from available packs in buffer and call callback */
+	void buildDataFromPacksBuffer(void);
 
 	/* If true - there will be used Serial for output */
 	bool USE_DEBUG = false;
