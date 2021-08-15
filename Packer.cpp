@@ -162,12 +162,12 @@ void Packer::printPack(builtPack p)
 builtPack Packer::getBuiltPack(char data[], unsigned char size) {
     builtPack bp;
 
-    if(size < 0 || (size-1) > PACK_SIZE) {
+    if(size < 0 || (size) > PACK_SIZE) {
         outerr((String) F("Provided data snippet is invalid. Cannot generate built pack."));
         return bp;
     }
 
-    for (unsigned char i = 0; i < (size-1); i++)
+    for (unsigned char i = 0; i < (size); i++)
     {
         bp.body[i] = data[i];
     }

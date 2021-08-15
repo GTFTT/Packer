@@ -43,7 +43,7 @@ void setup() {
     Serial.println((String) "Built pack: ");
     packer.printPack(packer.getBuiltPack(built.body, built.size+1));
     // Serial.println((String)"Built pack size: " + built.size);
-    pack restoredPack = packer.restorePack(packer.getBuiltPack(built.body, built.size + 1)); //Note: in real case you not always want to increase size by one(only for literal char arrays with last null character)
+    pack restoredPack = packer.restorePack(packer.getBuiltPack(built.body, built.size)); //Note: in real case you not always want to increase size by one(only for literal char arrays with last null character)
     // Serial.println("--------");
     packer.printPack(restoredPack);
     packer.pushPack(restoredPack);
