@@ -158,6 +158,7 @@ void Packer::printPack(builtPack p)
     outln();
 }
 
+/* This method is used to transform array of length 26+1 into a builtPack.*/
 builtPack Packer::getBuiltPack(char data[], unsigned char size) {
     builtPack bp;
 
