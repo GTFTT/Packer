@@ -27,6 +27,11 @@ unsigned char Packer::countPacks(char arr[], int size)
 
 packsContainer Packer::generatePacks(char message[], int size)
 {
+    //For debug
+    unsigned long startTime = 0;
+    unsigned long endTime = 0;
+    startTime = millis();
+
     int dataLength = size - 1; //Remove empty character from generation
     packsContainer packsCont;
     const unsigned char packsCount = countPacks(dataLength);
@@ -50,6 +55,9 @@ packsContainer Packer::generatePacks(char message[], int size)
     for(unsigned char k = 0; k < packsCount; k++) {
         packsCont.packs[k] = packs[k];
     }
+
+    endTime = millis();
+    outln((String) F("Packs generation time: ") + (endTime-startTime) + F(" ms"));
 
     return packsCont;
 }
@@ -268,7 +276,7 @@ void Packer::outln(void) {
 
 void Packer::clearPacksBuffer(void) {
     packsBuffer.count = 0; // Clearing static array is not necessary
-    out(F("Buffer cleared"));
+    outln(F("Buffer cleared"));
 }
 
 void Packer::checkPacksBuffer(void) {
@@ -351,7 +359,7 @@ void Packer::buildDataFromPacksBuffer(void) {
         }
     }
 
-    out(F("Generated data: "));
+    out(F("Generated message: "));
     for (int i = 0; i < sizeof(data); i++)
     {
         out((String) data[i]);
