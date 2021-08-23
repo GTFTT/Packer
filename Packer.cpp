@@ -228,8 +228,6 @@ void Packer::pushPack(pack p) {
 
     if(packsBuffer.lastPackNumber != p.number) {
         outerr(F("Pushed pack differs from packs in buffer."));
-        printPacksBuffer();
-        printPack(p);
         clearPacksBuffer();
     }
 
@@ -329,8 +327,8 @@ void Packer::checkPacksBuffer(void) {
         return;
     }
 
-    if(containsPacksOfTypeOne && containsPacksOfTypeTwo && containsPacksOfTypeThree) {
-        outln(F("OK: Lets build a message from packs of type 1, 2 and 3"));
+    if(containsPacksOfTypeOne && containsPacksOfTypeThree) {
+        outln((String) F("OK: Lets build a message from packs of type 1, 2 and 3: ") + containsPacksOfTypeOne + containsPacksOfTypeTwo + containsPacksOfTypeThree);
         buildDataFromPacksBuffer();
         clearPacksBuffer();
         return;
