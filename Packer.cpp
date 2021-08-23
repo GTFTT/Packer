@@ -166,6 +166,16 @@ void Packer::printPack(builtPack p)
     outln();
 }
 
+void Packer::printPacksBuffer(void)
+{
+    outln();
+    outln(F("------  Packs buffer   --------"));
+    for (unsigned char i = 0; i < packsBuffer.count; i++)
+        printPack(packsBuffer.packs[i]);
+    outln();
+    outln(F("-------------------------------"));
+}
+
 /* This method is used to transform array of length 26+1 into a builtPack.*/
 builtPack Packer::getBuiltPack(char data[], unsigned char size) {
     builtPack bp;
@@ -218,6 +228,8 @@ void Packer::pushPack(pack p) {
 
     if(packsBuffer.lastPackNumber != p.number) {
         outerr(F("Pushed pack differs from packs in buffer."));
+        printPacksBuffer();
+        printPack(p);
         clearPacksBuffer();
     }
 
