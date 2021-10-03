@@ -75,7 +75,7 @@ pack Packer::generatePack(char message[], int size, unsigned char packNumber, un
 
     if(packId >= packsCount || packId < 0) {
         outerr((String) F("Invalid packId provided"));
-        return;
+        return p;
     }
 
     //Calculate payload available size
